@@ -1,0 +1,161 @@
+#!/bin/sh
+#
+# mlgit
+#	Ejecuta comandos Git en múlptiples folders
+# 
+# Autor:
+#	dsalinas
+# 
+# Componentes:
+#	* Archivo alias_mlgit.ang con git-alias para 
+#     agregar a su archivo .gitconfig
+# 
+# Uso:
+#	Copiar el folder mlgit/ a /opt/, crear un alias 
+#	en ~/.bashrc: alias mgit='sh /opt/mlgit/mlgit' 
+#	actualizar: source ~/.bashrc
+#
+
+ASG=$1
+
+VER="0.3.0"
+
+defalias() {
+	bpar="<branch>..."
+		
+	dalias=( 
+		[0]=42	#total de gitcmdalias
+		[1]=aa	[2]="add ."
+		[3]=st	[4]="status"
+		[5]=ss	[6]="status -s"
+		[7]=sb	[8]="status -sb"
+		[9]=di	[10]="diff"
+		[11]=me	[12]="merge $bpar"
+		[13]=br	[14]="branch"
+		[15]=bv	[16]="branch -v"
+		[17]=bd	[18]="branch -d $bpar"
+		[19]=bf	[20]="branch -D $bpar"
+		[21]=co	[22]="checkout $bpar"
+		[23]=lg	[24]="log"
+		[25]=ls	[26]="log --stat"
+		[27]=lp	[28]="log -p"
+		[29]=lm	[30]="log -m"
+		[31]=in	[32]="init"
+		[33]=fe	[34]="fetch"
+		[35]=pl	[36]="pull"
+		[37]=ph	[38]="push"
+		[39]="--h"	[40]="<help>"
+		[41]="--v"	[42]="<version>" );
+}
+
+msgayuda() {
+	clear
+	echo
+	echo "||================================================="
+	echo "|| Alias de Comandos Git reconocidos por el Script"
+	echo "||"
+	for ((i=1; i<=${dalias[0]}; i+=2))
+	do
+		echo "||	${dalias[i]}	==	${dalias[((i+1))]}"
+	done
+	echo "||"
+	echo "|| `version`"
+	echo "||================================================="
+	echo
+}
+
+msgincorrecto() {
+	echo "mlgit: '$ASG' no es un comando de mlgit. Ver 'mgit --h'."
+}
+
+version() {
+	echo "mlgit version $VER"
+}
+
+validaparametro() {
+	gct=0
+	gcm=0
+	for ((i=1; i<=${dalias[0]}; i++))
+	do
+		let "gct += 1"
+		if [[ $ASG == ${dalias[$i]} ]]; then
+			gcm=$gct
+			ANG="PRO"
+			break
+		fi
+	done
+}
+
+# Se usan alias del array para llamar a los de .gitconfig
+# comandos completos del array, solo mensajes.
+bashuun_cmdgit() {
+	validaparametro
+	if [[ $ANG == "PRO" ]]; then
+		if [[ $ASG == "--h" || $ASG == "--v" ]]; then
+			if [[ $ASG == "--h" ]]; then
+				msgayuda
+			else
+				version
+			fi
+		else
+			TER="SUC"
+		fi
+		
+		if [[ $TER == "SUC" ]]; then
+			clear
+			echo "||======================================================="
+			echo "|| Ejecuta comandos Git en múltiples Folders"
+			echo "||====================================================="
+			echo "||"
+			
+			dirs=`ls -1d */`
+			
+			for d in $dirs;
+			do				
+				echo
+				echo
+				echo $d
+				
+				IFS=$'\r'
+				glines=`cd $d; git ${dalias[$gcm]}`
+				for gl in $glines;
+				do
+					echo $gl
+				done
+			done
+			
+			echo
+			echo
+			echo "||"
+			echo "||====================================================="
+			echo "|| Revisar detalladamente antes de aplicar cambios"
+			echo "||"
+			echo "|| `version`"
+			echo "||======================================================="
+			echo 
+			echo 
+		fi
+	else
+		msgincorrecto
+	fi
+}
+
+vaciaa() {
+	unset gct
+	unset gcm
+	unset bpar
+	unset dalias
+	unset ASG
+	unset VER
+	unset ANG
+	unset TER
+	unset glines
+}
+
+main() {
+	defalias
+	bashuun_cmdgit
+	vaciaa
+}
+
+main

@@ -1,0 +1,34 @@
+# alias_mlgit.ang
+#	Componente de configuración del script mlgit
+# 
+# Autor:
+#	dsalinas
+# 
+# Uso:
+#	agregar contenido al archivo ~/.gitconfig,
+#	de contar con algunos, agregar solo la diferencia
+
+[alias]
+	aa = add .
+
+	st = status
+	ss = status -s
+	sb = status -sb
+
+	di = diff
+	me = merge
+	br = branch
+	bv = branch -v
+	bd = branch -d
+	bf = branch -D
+	co = checkout
+
+	lg = log
+	ls = log --stat
+	lp = log -p
+	lm = log -m
+	
+	in = init
+	fe = fetch
+	pl = pull
+	ph = push
